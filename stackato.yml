@@ -1,0 +1,9 @@
+name: nodescale
+mem: 32M
+
+hooks:
+  post-staging:
+    - env
+    - echo $VCAP_APPLICATION | json uris
+  #pre-running:
+  #  - echo $VCAP_APPLICATION | json uris
