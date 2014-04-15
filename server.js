@@ -1,6 +1,17 @@
 var http = require("http"),
     url = require("url"),
-    port = process.env.VCAP_APP_PORT || 3000;
+    port = process.env.VCAP_APP_PORT || process.env.PORT || 3000;
+
+/* reference: http://stackoverflow.com/questions/3653065/get-local-ip-address-in-node-js */
+/* works only on systems with eth0 */
+var os=require('os');
+var ip;
+var eth0=os.networkInterfaces().eth0.forEach(function(alias){
+  if (alias.family=='IPv4') {
+    ip="eth0("+alias.family+"): "+alias.address;
+  }
+});
+
 
 http.createServer(function(request, response) {
 
@@ -8,15 +19,10 @@ http.createServer(function(request, response) {
 
         if (uri == "/") {
                 response.writeHead(200,{ 'Content-Type': 'text/html'});
-                response.write(["<h1 style='text-align:center;color:red'>",
-				"Stackato Scaling Test ",
-				"<span style='color:black;font-size:0.4em'>(in node.js)</span></h1>"].join(''), "utf8");
-
-		if (process.env.VCAP_APP_HOST)
-			response.write("<h3 style='text-align:center'>IP: "+process.env.VCAP_APP_HOST+"</h3>", "utf8");
-
-                response.write("<h3 style='text-align:center'>PID: "+process.pid+"</h3>", "utf8");
-
+                response.write(["<h2>NodeScale: showcases application instance scaling (containers with different IP/PID)</h2>",
+                "<h1>IP: ", ip,
+                "</h1><h1>PID: ", process.pid,
+                "</h1>"].join(''), "utf8");
                 response.end()
                 return;
         } else {
